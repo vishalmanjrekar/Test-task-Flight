@@ -180,7 +180,7 @@ export class Search extends Component {
                                 format="MM/dd/yyyy"
                                 margin="normal"
                                 open={isReturnOpen}
-                                minDate={moment().format('YYYY-MM-DD')}
+                                minDate={moment(departureDate).format('YYYY-MM-DD')}
                                 id="date-picker-inline"
                                 label="Return"
                                 value={returnDate}
