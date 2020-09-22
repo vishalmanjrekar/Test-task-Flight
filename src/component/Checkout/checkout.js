@@ -7,10 +7,16 @@ export class Checkout extends Component {
 
 
     render() {
-        const { selectedFlight : {itinerary}} = this.props;
+        const { selectedFlight : {DepartFlight: {itinerary}, ArrivalFlight:{ itinerary: itinerary1}}} = this.props;
         const image= itinerary.outFlights[0].carrierImage
         let timeDuration = itinerary.outFlights[0].duration
         itinerary.outFlights.length > 1 && itinerary.outFlights.map((item2, index1) => {
+            if(index1 !== 0) {
+                timeDuration += item2.duration + item2.layoverDuration
+            }
+        })
+        let timeDuration1 = Object.keys(itinerary1).length > 0 &&itinerary1.inFlights && itinerary1.inFlights[0].duration
+        Object.keys(itinerary1).length > 0 && itinerary1.inFlights && itinerary1.inFlights.length > 1 && itinerary.inFlights.map((item2, index1) => {
             if(index1 !== 0) {
                 timeDuration += item2.duration + item2.layoverDuration
             }
@@ -21,6 +27,9 @@ export class Checkout extends Component {
                     <div className="custom-container">
                         <h4>Review your booking</h4>
                     </div>
+                </div>
+                <div className="sub-head">
+                    <h6>Itinery</h6>
                 </div>
                 <div className="custom-container">
                     <div className="Itinerary-wrapper">
@@ -42,7 +51,7 @@ export class Checkout extends Component {
                             return (
                                 <div className="itnry-flt-body" key={dataIndex}>
                                     <div className="airline-info">
-                                        <span><img src={image}/></span>
+                                        <span><img src={image} alt="flightImage"/></span>
                                         <div className="logo-info">
                                             <p className="font14"><b>{data.carrierFullName}</b></p>
                                             <p className="font12">{`${data.carrierCode}-${data.flightNumber}`}</p>
@@ -59,10 +68,10 @@ export class Checkout extends Component {
                                         <div className="fli-time-section pull-left">
                                             <p className="dept-time mb-0">{data.arriving}</p>
                                             <p className="font14 bold">{moment(data.arrivingDateTime).format('MMM DD YY')}</p>
-                                            <p className="arrival-city">
+                                            <span className="arrival-city">
                                                 <span className="bold">{itinerary.destinationGeoname.City}</span>
                                                 <p>{data.destinationAirportFullName}</p>
-                                            </p></div>
+                                            </span></div>
                                     </div>
                                     <div className="content-right">
                                         <p className="append_bottom5 LatoBold mb-0 font12">Fare Type</p>
@@ -74,6 +83,62 @@ export class Checkout extends Component {
                     </div>
 
                 </div>
+                {Object.keys(itinerary1).length > 0 && itinerary1.inFlights && <div className="custom-container">
+                    <div className="Itinerary-wrapper">
+                        <div className="itnry-flt-header">
+                            <div className="make-flex">
+                                <div className="label-view">
+                                    <p>Arrive</p>
+                                    <p>{moment(itinerary1.inFlights[0].departDateTime).format('MMM DD YY')}</p>
+                                </div>
+                                <div className="class-section">
+                                    <p><span>{itinerary1.origin} - {itinerary1.destination}</span></p>
+                                    <p>{itinerary1.outStops === 0 ? '' : `${itinerary1.outStops} stop |`} {Math.floor(timeDuration1 / 60)}hrs {timeDuration1 % 60}mins</p>
+                                </div>
+                            </div>
+                            {/*<span className="fare-wrap"><p> Fare Rules</p></span>*/}
+                        </div>
+                        {itinerary1.inFlights.map((data, dataIndex) => {
+
+                            return (
+                                <div className="itnry-flt-body" key={dataIndex}>
+                                    <div className="airline-info">
+                                        <span><img src={image} alt="flightImage"/></span>
+                                        <div className="logo-info">
+                                            <p className="font14"><b>{data.carrierFullName}</b></p>
+                                            <p className="font12">{`${data.carrierCode}-${data.flightNumber}`}</p>
+                                        </div>
+                                    </div>
+                                    <div className="air-line-content">
+                                        <div className="fli-time-section">
+                                            <div className="dept-time ">{data.leaving}</div>
+                                            <p className="font14 bold">{moment(data.departDateTime).format('ddd,DD MMM YY')}</p>
+                                            <p className="dept-city">
+                                                <span
+                                                    className="bold">{itinerary.originGeoname.City}</span>{data.originAirportFullName}
+                                            </p>
+                                        </div>
+                                        <p className="fli-stops">{Math.floor(data.duration / 60)}hrs {data.duration % 60}mins</p>
+                                        <div className="fli-time-section pull-left">
+                                            <p className="dept-time mb-0">{data.arriving}</p>
+                                            <p className="font14 bold">{moment(data.arrivingDateTime).format('MMM DD YY')}</p>
+                                            <span className="arrival-city">
+                                                <span className="bold">{itinerary.destinationGeoname.City}</span>
+                                                <p>{data.destinationAirportFullName}</p>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="content-right">
+                                        <p className="append_bottom5 LatoBold mb-0 font12">Fare Type</p>
+                                        <span className="font14 bold custom-train">SAVER</span>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                </div>
+                }
             </div>
         )
     }

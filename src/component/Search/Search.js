@@ -5,13 +5,19 @@ import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import DateFnsUtils from '@date-io/date-fns';
 import DisplayTable from "../DisplayTable/displayTable";
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import './search.css';
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import { connect } from "react-redux";
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import moment from "moment";
+
+import * as actions from "../../action";
 
 export class Search extends Component {
     state = {
@@ -28,7 +34,11 @@ export class Search extends Component {
         tableData: [],
         totalPage: 0,
         currentPage: 1,
-        sortedBy: 'price'
+        sortedBy: 'price',
+        departureFlightKey: '',
+        arrivalFlightKey: '',
+        selectDepartureFlight: {},
+        selectArrivalFlight: {}
     };
 
     handleChange = (event, newValue, key) => {
@@ -41,6 +51,13 @@ export class Search extends Component {
                 selectedToOption: newValue
             })
         }
+    }
+
+    handleFlightBooking = (DepartFlight, ArrivalFlight) =>{
+        const {getSelectedFlight,history} = this.props;
+        getSelectedFlight({DepartFlight: DepartFlight,ArrivalFlight: ArrivalFlight })
+        document.body.className = '';
+        history.push("/checkout")
     }
 
     onInputHandle = (e,value) => {
@@ -80,8 +97,8 @@ export class Search extends Component {
                     return response.json();
                 })
                 .then(res => {
-
-                    this.setState({tableData: res.legs, totalPage: res.totalPages, currentPage: 1})
+                    this.setState({tableData: res.legs, totalPage: res.totalPages, currentPage: 1, departureFlightKey:res.legs[0].itinerary.outFlights[0].flightNumber, selectDepartureFlight: res.legs[0], arrivalFlightKey: res.legs[0].itinerary.inFlights && res.legs[0].itinerary.inFlights[0].flightNumber, selectArrivalFlight: returnDate !== null ? res.legs[0]: {itinerary: {}}})
+                    document.body.className += 'flight-result-bottom';
                 })
                 .catch(err => {
                     console.log(err);
@@ -97,7 +114,7 @@ export class Search extends Component {
                 return response.json();
             })
             .then(res => {
-                this.setState({tableData: res.legs,totalPage: res.totalPages})
+                this.setState({tableData: res.legs, totalPage: res.totalPages, departureFlightKey:res.legs[0].itinerary.outFlights[0].flightNumber,arrivalFlightKey: res.legs[0].itinerary.inFlights && res.legs[0].itinerary.inFlights[0].flightNumber, selectDepartureFlight: res.legs[0], selectArrivalFlight: returnDate !== null ? res.legs[0]: {itinerary: {}}})
             })
             .catch(err => {
                 console.log(err);
@@ -113,14 +130,26 @@ export class Search extends Component {
                 return response.json();
             })
             .then(res => {
-                this.setState({tableData: res.legs,totalPage: res.totalPages})
+                this.setState({tableData: res.legs,totalPage: res.totalPages, departureFlightKey:res.legs[0].itinerary.outFlights[0].flightNumber,arrivalFlightKey: res.legs[0].itinerary.inFlights && res.legs[0].itinerary.inFlights[0].flightNumber, selectDepartureFlight: res.legs[0], selectArrivalFlight: returnDate !== null ? res.legs[0]: {itinerary: {}}})
             })
             .catch(err => {
                 console.log(err);
             });
     }
+
+    onHandleRadioChange = (value, key) => {
+        const {tableData} =this.state
+        if(key === 'departure') {
+            const resultData = tableData.filter((item) => item.itinerary.outFlights[0].flightNumber === value)
+            this.setState({departureFlightKey: value, selectDepartureFlight: resultData[0]})
+        }
+        if(key === 'arrival') {
+            const resultData = tableData.filter((item) => item.itinerary.inFlights[0].flightNumber === value)
+            this.setState({arrivalFlightKey: value, selectArrivalFlight: resultData[0]})
+        }
+    }
     render() {
-        const { selectedFromOption, selectedToOption, totalAdult,currentPage,sortedBy, tableData,totalPage, totalChild, options, isDepartureOpen, isReturnOpen, departureDate, returnDate } = this.state;
+        const { selectedFromOption, selectedToOption,departureFlightKey,selectDepartureFlight,selectArrivalFlight, arrivalFlightKey, totalAdult,currentPage,sortedBy, tableData,totalPage, totalChild, options, isDepartureOpen, isReturnOpen, departureDate, returnDate } = this.state;
         return (
             <div>
                 <div className="main-wrapper-flight">
@@ -225,10 +254,62 @@ export class Search extends Component {
                         <Button variant="contained" color="primary" onClick={() => this.onSearchHandle()}>Search</Button>
                     </div>
                 </div>
-                {tableData.length > 0 && <DisplayTable data={tableData} onSortHandle={this.onSortHandle} returnDate={returnDate} totalPage={totalPage} currentPage={currentPage} onHandlePagination={this.onHandlePagination} sortedBy={sortedBy} history={this.props.history}/> }
+                {selectDepartureFlight.itinerary &&
+                <div className="flight-search-result">
+                    <Card className="flight-search-result-card">
+                        <CardContent className="flight-search-result-content d-flex align-items-center">
+                            <div className="flight-search-result-list">
+                                <div>
+                                    <div className="flight-search-result-head">
+                                        <span className="search-result-head">Departure</span>
+                                        <span>{selectDepartureFlight.itinerary.outFlights[0].carrierFullName}</span>
+                                        {selectDepartureFlight.itinerary.outFlights.map((item,indexing) => {
+                                            return <span key={indexing}>{item.carrierCode}-{item.flightNumber}</span>
+                                        })}
+                                    </div>
+                                    <div className="flight-search-result-time d-flex align-items-center mt-3">
+                                        <div><img src={selectDepartureFlight.itinerary.outFlights[0].carrierImage} alt="flightImage"/></div>
+                                        <div className="ml-3">
+                                            <span>{selectDepartureFlight.itinerary.outFlights[0].leaving}</span>
+                                            <ArrowRightAltIcon/>
+                                            <span>{selectDepartureFlight.itinerary.outFlights[0].arriving}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {returnDate !== null && Object.keys(selectArrivalFlight.itinerary).length > 0 &&
+                            <div className="flight-search-result-list">
+                                <div>
+                                    <div className="flight-search-result-head">
+                                        <span className="search-result-head">Return</span>
+                                        <span>{selectArrivalFlight.itinerary.inFlights[0].carrierFullName}</span>
+                                        {selectArrivalFlight.itinerary.inFlights.map((item,index) => {
+                                            return <span key={index}>{item.carrierCode}-{item.flightNumber}</span>
+                                        })}
+                                    </div>
+                                    <div className="flight-search-result-time d-flex align-items-center mt-3">
+                                        <div><img src={selectArrivalFlight.itinerary.inFlights[0].carrierImage} alt="flightImage"/></div>
+                                        <div className="ml-3">
+                                            <span>{selectArrivalFlight.itinerary.inFlights[0].leaving}</span>
+                                            <ArrowRightAltIcon/>
+                                            <span>{selectArrivalFlight.itinerary.inFlights[0].arriving}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            <div className="flight-search-result-btn">
+                                <Button variant="contained" color="primary" onClick = {() => this.handleFlightBooking(selectDepartureFlight,selectArrivalFlight)}>Book</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+                }
+                {tableData.length > 0 && <DisplayTable data={tableData} onHandleRadioChange={this.onHandleRadioChange} arrivalFlightKey={arrivalFlightKey} departureFlightKey={departureFlightKey} onSortHandle={this.onSortHandle} returnDate={returnDate} totalPage={totalPage} currentPage={currentPage} onHandlePagination={this.onHandlePagination} sortedBy={sortedBy} history={this.props.history}/> }
             </div>
         );
     }
 }
 
-export default Search
+export default connect(null, actions)(Search);

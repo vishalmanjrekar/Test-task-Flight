@@ -140,7 +140,7 @@
     flex-direction: column;
 }
 .location .leave {
-    font-size: 22px;
+    font-size: 18px;
 }
 .duration .math {
     padding-bottom: 5px;
@@ -199,6 +199,22 @@
     margin-bottom: 10px;
 }
 
+
+.main-content-flight .price {
+    font-size: 26px;
+    padding-left: 15px;
+}
+
+.sub-head {
+    max-width: 880px;
+    margin: 30px auto 0;
+}
+.sub-head h6 {
+    font-size: 24px;
+    color: #343434;
+    margin-bottom: 0;
+}
+
 @media screen and (max-width: 767px) {
     .main-content-flight {
         flex-direction: column;
@@ -240,4 +256,60 @@
 }
 .MuiPaper-root.MuiMenu-paper.MuiPopover-paper.MuiPaper-elevation8.MuiPaper-rounded {
     top: 165px !important;
+}
+
+.flight-result-bottom {
+    padding-bottom: 160px;
+}
+
+.flight-search-result {
+    position: fixed;
+    z-index: 9;
+    width: 100%;
+    bottom: 0;
+    padding: 15px 20px;
+}
+
+.flight-search-result .flight-search-result-card {
+    background: #343434;
+}
+.flight-search-result .flight-search-result-list {
+    flex: 1;
+    max-width: calc(100% - 74px);
+    padding-right: 10px;
+    margin-right: 20px;
+    border-right: 1px solid #555;
+}
+
+.flight-search-result-list .flight-search-result-head .search-result-head {
+    color: #c1c1c1;
+    border-right: 1px solid #ddd;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+.flight-search-result-list .flight-search-result-head span {
+    color: #ffffff;
+    border-right: 1px solid #ddd;
+    padding-right: 10px;
+    margin-right: 10px;
+    font-size: 15px;
+    line-height: 18px;
+    display: inline-block;
+}
+.flight-search-result-list .flight-search-result-head span:last-child {
+    border-right: none;
+}
+.flight-search-result-list .flight-search-result-time span {
+    color: #ffffff;
+}
+.flight-search-result-list .flight-search-result-time .MuiSvgIcon-root {
+    margin: 0 10px;
+    color: #777777;
+}
+
+.flight-search-result-content .flight-search-result-btn .MuiButton-root {
+    background: #ffffff;
+    color: #343434;
+    font-weight: 600;
+    padding: 12px 28px;
 }

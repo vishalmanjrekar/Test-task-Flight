@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { connect } from "react-redux";
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
@@ -9,18 +8,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
+import Radio from '@material-ui/core/Radio';
 import '../Search/search.css';
-import * as actions from "../../action";
 
 export class DisplayTable extends Component {
-    handleFlightBooking = (selectedFlight) =>{
-        const {getSelectedFlight,history} = this.props;
-        getSelectedFlight(selectedFlight)
-        history.push("/checkout")
-    }
-
     render() {
-        const {sortedBy,onSortHandle, data , totalPage, currentPage , onHandlePagination , returnDate} = this.props;
+        const {sortedBy,onSortHandle, data ,arrivalFlightKey, totalPage, currentPage , onHandlePagination , returnDate, departureFlightKey, onHandleRadioChange} = this.props;
         return(
             <div className="main-content-flight">
                 <div className="depart-wrap">
@@ -57,7 +50,14 @@ export class DisplayTable extends Component {
                                         }) : <span className="font12">{item.itinerary.outFlights[0].carrierCode + item.itinerary.outFlights[0].flightNumber}</span>}
                                     </div>
                                     <CardContent key={index}>
-                                        <img src={item.itinerary.outFlights[0].carrierImage}/>
+                                        <Radio
+                                            checked={departureFlightKey === item.itinerary.outFlights[0].flightNumber}
+                                            value={item.itinerary.outFlights[0].flightNumber}
+                                            name="radio-button-demo"
+                                            onChange={(e) => onHandleRadioChange(e.target.value, 'departure')}
+                                            inputProps={{ 'aria-label': 'A' }}
+                                        />
+                                        <img src={item.itinerary.outFlights[0].carrierImage} alt="flightImage"/>
 
                                         <div className="location">
                                             <span className="bold leave">{item.itinerary.outFlights[0].leaving}</span>
@@ -81,7 +81,7 @@ export class DisplayTable extends Component {
                                             <span className="bold leave"> {item.itinerary.outFlights[item.itinerary.outFlights.length - 1].arriving}</span>
                                             <span className="font14">{item.itinerary.destinationGeoname.City} </span>
                                         </div>
-                                        <Button variant="contained" color="primary" onClick = {() => this.handleFlightBooking(item)}>Book</Button>
+                                        <span className="bold leave price">{item.cost.price} $</span>
                                     </CardContent>
                                 </Card>
                             )
@@ -114,7 +114,14 @@ export class DisplayTable extends Component {
                                         }) : <span className="font12">{item.itinerary.inFlights[0].carrierCode + item.itinerary.inFlights[0].flightNumber}</span>}
                                     </div>
                                     <CardContent>
-                                        <img src={item.itinerary.inFlights[0].carrierImage}/>
+                                        <Radio
+                                            checked={arrivalFlightKey === item.itinerary.inFlights[0].flightNumber}
+                                            value={item.itinerary.inFlights[0].flightNumber}
+                                            name="radio-button-demo"
+                                            onChange={(e) => onHandleRadioChange(e.target.value, 'arrival')}
+                                            inputProps={{ 'aria-label': 'A' }}
+                                        />
+                                        <img src={item.itinerary.inFlights[0].carrierImage} alt="flightImage"/>
 
                                         <div className="location">
                                             <span className="bold leave">{item.itinerary.inFlights[0].leaving}</span>
@@ -136,7 +143,7 @@ export class DisplayTable extends Component {
                                             <span className="bold leave"> {item.itinerary.inFlights[item.itinerary.inFlights.length - 1].arriving}</span>
                                             <span className="font14"> {item.itinerary.originGeoname.City} </span>
                                         </div>
-                                        <Button variant="contained" color="primary" onClick={() => this.handleFlightBooking(item)}>Book</Button>
+                                        <span className="bold leave price">{item.cost.price} $</span>
                                     </CardContent>
                                 </Card>
                             )
@@ -148,4 +155,4 @@ export class DisplayTable extends Component {
     }
 }
 
-export default connect(null, actions)(DisplayTable);
+export default DisplayTable;
