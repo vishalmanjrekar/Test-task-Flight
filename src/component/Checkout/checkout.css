@@ -116,3 +116,49 @@
     color: #fff;
     font-size: 26px;
 }
+
+.Itinerary-wrapper .itnry-flt-body {
+    flex-direction: column;
+}
+.itnry-flt-body .flight-next-set {
+    display: flex;
+}
+.Itinerary-wrapper .itnry-flt-body .flight-hold-duration {
+    flex: 1;
+    width: 600px;
+    margin: 0 auto 35px;
+    text-align: center;
+    position: relative;
+    background: #fff;
+    padding: 14px;
+    border-radius: 50px;
+    border: 2px solid #777777;
+    color: #555555;
+}
+.Itinerary-wrapper .itnry-flt-body .flight-hold-duration:before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: #777777;
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.Itinerary-wrapper .itnry-flt-body .flight-hold-duration:after {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: #777777;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.Itinerary-wrapper .itnry-flt-body .flight-hold-duration span {
+    color: #555555;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #777777;
+    font-weight: 600;
+}

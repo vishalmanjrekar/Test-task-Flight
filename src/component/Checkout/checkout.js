@@ -50,6 +50,8 @@ export class Checkout extends Component {
 
                             return (
                                 <div className="itnry-flt-body" key={dataIndex}>
+                                    {data.layoverDuration > 0 && <div className="flight-hold-duration"><span>Changes of Planes </span><strong>{Math.floor(data.layoverDuration/60)}hrs {data.layoverDuration%60}mins</strong> layOver in <strong>{data.originAirportFullName}</strong></div>}
+                                    <div className="flight-next-set">
                                     <div className="airline-info">
                                         <span><img src={image} alt="flightImage"/></span>
                                         <div className="logo-info">
@@ -77,6 +79,7 @@ export class Checkout extends Component {
                                         <p className="append_bottom5 LatoBold mb-0 font12">Fare Type</p>
                                         <span className="font14 bold custom-train">SAVER</span>
                                     </div>
+                                    </div>
                                 </div>
                             )
                         })}
@@ -102,6 +105,8 @@ export class Checkout extends Component {
 
                             return (
                                 <div className="itnry-flt-body" key={dataIndex}>
+                                    {data.layoverDuration > 0 && <div className="flight-hold-duration"><span>Changes of Planes </span><strong>{Math.floor(data.layoverDuration/60)}hrs {data.layoverDuration%60}mins</strong> layOver in <strong>{data.originAirportFullName}</strong></div>}
+                                    <div className="flight-next-set">
                                     <div className="airline-info">
                                         <span><img src={image} alt="flightImage"/></span>
                                         <div className="logo-info">
@@ -131,6 +136,7 @@ export class Checkout extends Component {
                                     <div className="content-right">
                                         <p className="append_bottom5 LatoBold mb-0 font12">Fare Type</p>
                                         <span className="font14 bold custom-train">SAVER</span>
+                                    </div>
                                     </div>
                                 </div>
                             )

@@ -20,26 +20,33 @@ import moment from "moment";
 import * as actions from "../../action";
 
 export class Search extends Component {
-    state = {
-        selectedFromOption: null,
-        selectedToOption: null,
-        totalAdult: 1,
-        totalChild: 0,
-        options: [],
-        city: '',
-        departureDate: moment().format('YYYY-MM-DD'),
-        returnDate: null,
-        isDepartureOpen: false,
-        isReturnOpen: false,
-        tableData: [],
-        totalPage: 0,
-        currentPage: 1,
-        sortedBy: 'price',
-        departureFlightKey: '',
-        arrivalFlightKey: '',
-        selectDepartureFlight: {},
-        selectArrivalFlight: {}
-    };
+    constructor(props) {
+        super(props);
+        const { searchFlightDetails } = this.props
+        if(Object.keys(searchFlightDetails).length > 0) {
+            document.body.className += 'flight-result-bottom';
+        }
+        this.state = {
+            selectedFromOption: searchFlightDetails.selectedFromOption || null,
+            selectedToOption: searchFlightDetails.selectedToOption || null,
+            totalAdult: searchFlightDetails.totalAdult || 1,
+            totalChild: searchFlightDetails.totalChild || 0,
+            options: searchFlightDetails.options || [],
+            city: searchFlightDetails.city || '',
+            departureDate: searchFlightDetails.departureDate || moment().format('YYYY-MM-DD'),
+            returnDate: searchFlightDetails.returnDate || null,
+            isDepartureOpen: searchFlightDetails.isDepartureOpen || false,
+            isReturnOpen: searchFlightDetails.isReturnOpen || false,
+            tableData: searchFlightDetails.tableData || [],
+            totalPage: searchFlightDetails.totalPage || 0,
+            currentPage: searchFlightDetails.currentPage || 1,
+            sortedBy: searchFlightDetails.sortedBy || 'price',
+            departureFlightKey: searchFlightDetails.departureFlightKey || '',
+            arrivalFlightKey: searchFlightDetails.arrivalFlightKey || '',
+            selectDepartureFlight: searchFlightDetails.selectDepartureFlight || {},
+            selectArrivalFlight: searchFlightDetails.selectArrivalFlight || {}
+        };
+    }
 
     handleChange = (event, newValue, key) => {
         if(key === 'origin') {
@@ -56,7 +63,6 @@ export class Search extends Component {
     handleFlightBooking = (DepartFlight, ArrivalFlight) =>{
         const {getSelectedFlight,history} = this.props;
         getSelectedFlight({DepartFlight: DepartFlight,ArrivalFlight: ArrivalFlight })
-        document.body.className = '';
         history.push("/checkout")
     }
 
@@ -91,12 +97,14 @@ export class Search extends Component {
 
     onSearchHandle = () => {
         const {selectedToOption, selectedFromOption, returnDate, departureDate, totalChild, totalAdult, sortedBy} = this.state
+        const { selectedFlightDetails } = this.props
         if (selectedToOption !== null && selectedFromOption !== null) {
             fetch(`http://business-issue1608.test.travelwits.com/getflights?origin=${selectedFromOption.value}&destination=${selectedToOption.value}&leaveDate=${departureDate}&${returnDate && `returnDate=${returnDate}`}&numberOfAdults=${totalAdult}&numberOfChildren=${totalChild}&page=0&sortBy=${sortedBy}`)
                 .then(response => {
                     return response.json();
                 })
                 .then(res => {
+                    selectedFlightDetails({...this.state, tableData: res.legs, totalPage: res.totalPages, currentPage: 1, departureFlightKey:res.legs[0].itinerary.outFlights[0].flightNumber, selectDepartureFlight: res.legs[0], arrivalFlightKey: res.legs[0].itinerary.inFlights && res.legs[0].itinerary.inFlights[0].flightNumber, selectArrivalFlight: returnDate !== null ? res.legs[0]: {itinerary: {}}})
                     this.setState({tableData: res.legs, totalPage: res.totalPages, currentPage: 1, departureFlightKey:res.legs[0].itinerary.outFlights[0].flightNumber, selectDepartureFlight: res.legs[0], arrivalFlightKey: res.legs[0].itinerary.inFlights && res.legs[0].itinerary.inFlights[0].flightNumber, selectArrivalFlight: returnDate !== null ? res.legs[0]: {itinerary: {}}})
                     document.body.className += 'flight-result-bottom';
                 })
@@ -312,4 +320,10 @@ export class Search extends Component {
     }
 }
 
-export default connect(null, actions)(Search);
+function mapStateToProps(state) {
+    return {
+        searchFlightDetails: state.flights.searchFlightDetails,
+    }
+}
+
+export default connect(mapStateToProps, actions)(Search);

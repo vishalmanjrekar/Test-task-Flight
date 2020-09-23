@@ -313,3 +313,21 @@
     font-weight: 600;
     padding: 12px 28px;
 }
+
+.MuiTooltip-tooltip .tooltip-duration-content {
+    text-align: center;
+
+}
+.MuiTooltip-tooltip .tooltip-duration-content strong {
+    display: block;
+    width: 100%;
+    margin-bottom: 4px;
+}
+.MuiTooltip-tooltip .tooltip-duration-content span {
+    padding-right: 6px;
+    margin-right: 6px;
+    border-right: 1px solid #ffffff;
+}
+.MuiTooltip-tooltip .tooltip-duration-content span:last-child {
+    border-right: none;
+}

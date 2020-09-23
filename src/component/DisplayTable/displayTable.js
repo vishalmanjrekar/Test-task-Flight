@@ -43,9 +43,9 @@ export class DisplayTable extends Component {
                                 <Card className="custom-info" key={index}>
                                     <div className="custom-itienary-flight">
                                         <span className="font14"><b>{item.itinerary.outFlights[0].carrierFullName}</b></span>
-                                        {item.itinerary.outFlights.length > 1 ? item.itinerary.outFlights.map((data1) => {
+                                        {item.itinerary.outFlights.length > 1 ? item.itinerary.outFlights.map((data1,index) => {
                                             return (
-                                                <span className="font12">{data1.carrierCode + data1.flightNumber}</span>
+                                                <span className="font12" key={index}>{data1.carrierCode + data1.flightNumber}</span>
                                             )
                                         }) : <span className="font12">{item.itinerary.outFlights[0].carrierCode + item.itinerary.outFlights[0].flightNumber}</span>}
                                     </div>
@@ -68,9 +68,9 @@ export class DisplayTable extends Component {
                                             <span className="font12 m-1">{item.itinerary.outStops === 0 ? 'Non stop' : item.itinerary.outStops + "stop"}</span>
                                             {item.itinerary.outFlights.length > 0 && item.itinerary.outFlights.map((item1, index) => {
                                                 if(index === 0) return null
-                                                const title = <span>Plan Change <br/>{item1.originAirportFullName +'|'+ `${Math.floor(item1.layoverDuration/60)}hrs ${item1.layoverDuration%60}mins`}</span>
+                                                const title = <div className="tooltip-duration-content"><strong>Plan Change</strong> <span>{item1.originAirportFullName} </span> <span>{Math.floor(item1.layoverDuration/60)}hrs {item1.layoverDuration%60}mins</span></div>
                                                 return (
-                                                    <Tooltip title={title}><Button className="tooltip-btn" variant="contained" color="secondary">Tooltip</Button></Tooltip>
+                                                    <Tooltip className="tooltip-duration" title={title} key={index}><Button className="tooltip-btn" variant="contained" color="secondary">Tooltip</Button></Tooltip>
                                                 )
                                             })
                                             }
@@ -132,9 +132,9 @@ export class DisplayTable extends Component {
                                             <span className="font12 m-1">{item.itinerary.inStops === 0 ? 'Non stop' : item.itinerary.inStops + "stop"}</span>
                                             {item.itinerary.inFlights.length > 0 && item.itinerary.inFlights.map((item1, index) => {
                                                 if(index === 0) return null
-                                                const title = <span>Plan Change <br/>{item1.originAirportFullName +'|'+ `${Math.floor(item1.layoverDuration/60)}hrs ${item1.layoverDuration%60}mins`}</span>
+                                                const title = <div className="tooltip-duration-content"><strong>Plan Change</strong> <span>{item1.originAirportFullName} </span> <span>{Math.floor(item1.layoverDuration/60)}hrs {item1.layoverDuration%60}mins</span></div>
                                                 return (
-                                                    <Tooltip title={title}><Button className="tooltip-btn" variant="contained" color="secondary">Tooltip</Button></Tooltip>
+                                                    <Tooltip className="tooltip-duration" title={title} key={index}><Button className="tooltip-btn" variant="contained" color="secondary">Tooltip</Button></Tooltip>
                                                 )
                                             })
                                             }
